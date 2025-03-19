@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
 
     spriteShader.SetInt("texture1", 0);
 
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, texture.id);
+  //  glActiveTexture(GL_TEXTURE0 + 0);
+  //  glBindTexture(GL_TEXTURE_2D, texture.id);
 
     World world;
     world.VAO = VAO;
@@ -73,12 +73,14 @@ int main(int argc, char *argv[])
     Ball *ball = world.Instantiate<Ball>();
     ball->shader = spriteShader;
     ball->texture = texture;
+    ball->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     {
         Paddle *paddle = world.Instantiate<Paddle>();
         paddle->shader = spriteShader;
         paddle->texture = texture;
         paddle->name = "RightPaddle";
+        paddle->color = glm::vec4(01.0f, 0.0f, 0.0f, 1.0f); //red
         paddle->position = glm::vec3(window.GetScreenWidth() - (10.0f*0.5f), window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
@@ -87,13 +89,14 @@ int main(int argc, char *argv[])
         paddle->shader = spriteShader;
         paddle->texture = texture;
         paddle->name = "LeftPaddle";
+        paddle->color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); //blue
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
         deltaTime = frameRateManager.StartFrame();
-        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
 
         glClear(GL_COLOR_BUFFER_BIT);
 

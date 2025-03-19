@@ -11,7 +11,7 @@ public:
     void Draw();
     void OnDestroy();
 
-    float speed = 50.0f;
+    float speed = 200.0f;
 };
 
 //hello

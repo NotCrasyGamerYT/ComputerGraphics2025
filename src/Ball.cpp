@@ -2,6 +2,7 @@
 
 #include "Paddle.hpp"
 
+
 using namespace glm;
 
 void Ball::Start() {
@@ -43,14 +44,16 @@ void Ball::Update(float _dt) {
 
     // detect if ball hits left paddle
     Paddle* leftPaddle = world->FindByName<Paddle>("LeftPaddle"); 
-    if (EntityOverlap2D(*this ,*leftPaddle)) {
-        dir.x = abs(dir.x);
-    }
+if (EntityOverlap2D(*this, *leftPaddle)) {
+    dir.x = abs(dir.x);
+    color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); // Change color to blue
+}
 
     // detect if ball hits right paddle
     Paddle* rightPaddle = world->FindByName<Paddle>("RightPaddle"); 
     if (EntityOverlap2D(*this ,*rightPaddle)) {
         dir.x = abs(dir.x) * -1.0f;
+        color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); // Change color to red
     }
 
     if (dir != vec2(0.0f))

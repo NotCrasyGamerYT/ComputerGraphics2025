@@ -7,5 +7,5 @@ uniform float TIME;
 uniform sampler2D texture1;
 void main()
 {
-   FragColor = texture(texture1, uv);//COLOR;//vec4(vec3(cos(TIME)), 1.0f);
+   FragColor = COLOR;//COLOR;//vec4(vec3(cos(TIME)), 1.0f);
 }
