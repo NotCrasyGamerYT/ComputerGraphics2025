@@ -12,7 +12,7 @@ void Ball::Start() {
 }
 
 void Ball::Update(float _dt) {
-    window->SetWindowName("Pong");
+    window->SetWindowName("Pong" + std::string(" || Blue Score: ") + std::to_string(score_l) + std::string(" || Red Score: ") + std::to_string(score_r));
 
     if (dir == vec2(0.0f))
     {
@@ -36,10 +36,12 @@ void Ball::Update(float _dt) {
     if (position.x > window->GetScreenWidth() - (scale.x * 0.5f)) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
+        score_l++;
     }
     if (position.x < scale.x * 0.5f) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
+        score_r++;
     }
 
     // detect if ball hits left paddle
