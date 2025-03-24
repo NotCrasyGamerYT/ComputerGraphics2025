@@ -23,8 +23,10 @@
 // move out to external class
 unsigned int vertexShader;
 unsigned int VBO, VAO, EBO;
+unsigned int gridVBO, gridVAO;
 
 void InitModel();
+void InitGrid();
 
 #ifdef _WIN32
 #define main SDL_main
@@ -44,6 +46,10 @@ int main(int argc, char *argv[])
     float deltaTime = 0.0f;
     float fps = 0.0f;
 
+    Canis::Shader gridshader;
+    gridshader.Compile("assets/shaders/grid.vs", "assets/shaders/grid.fs");
+    gridshader.Link();
+
     Canis::Shader spriteShader;
     spriteShader.Compile("assets/shaders/sprite.vs", "assets/shaders/sprite.fs");
     spriteShader.AddAttribute("aPos");
@@ -51,6 +57,7 @@ int main(int argc, char *argv[])
     spriteShader.Link();
 
     InitModel();
+    InitGrid();
 
     Canis::GLTexture texture = Canis::LoadImageGL("assets/textures/ForcePush.png", true);
 
@@ -93,10 +100,14 @@ int main(int argc, char *argv[])
         paddle->position = glm::vec3(10.0f*0.5f, window.GetScreenHeight() * 0.5f, 0.0f);
     }
 
+    float time = 0.0f;
+
     while (inputManager.Update(window.GetScreenWidth(), window.GetScreenHeight()))
     {
         deltaTime = frameRateManager.StartFrame();
         glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
+
+        time += deltaTime;
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -107,6 +118,13 @@ int main(int argc, char *argv[])
         mat4 view = mat4(1.0f);
         view = translate(view, vec3(0.0f, 0.0f, 0.5f));
         view = inverse(view);
+
+        gridshader.Use();
+        gridshader.SetFloat("time", time);
+
+        glBindVertexArray(gridVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
         world.Update(view, projection, deltaTime);
 
@@ -148,6 +166,42 @@ void InitModel()
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void InitGrid()
+{
+    float quadVertices[] = {
+        // positions    // texCoords
+        -1.0f,  1.0f, 0.0f,  0.0f, 1.0f,  // Top-left
+        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f,  // Bottom-left
+         1.0f, -1.0f, 0.0f,  1.0f, 0.0f,  // Bottom-right
+         1.0f,  1.0f, 0.0f,  1.0f, 1.0f   // Top-right
+    };
+    
+    unsigned int indices[] = {
+        0, 1, 2, // First triangle
+        0, 2, 3  // Second triangle
+    };
+
+    glGenVertexArrays(1, &gridVAO);
+    glGenBuffers(1, &gridVBO);
+    
+    glBindVertexArray(gridVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
