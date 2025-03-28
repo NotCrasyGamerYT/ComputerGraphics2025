@@ -8,11 +8,12 @@ using namespace glm;
 void Ball::Start() {
     name = "Ball";
     position = vec3(window->GetScreenWidth() * 0.5f, window->GetScreenHeight() * 0.5f, 0.0f);
+    window->SetWindowName("Pong" + std::string(" || Blue Score: 0") + std::string(" || Red Score: 0"));
     scale = vec3(100.0f, 100.0f, 0.0f);
 }
 
 void Ball::Update(float _dt) {
-    window->SetWindowName("Pong" + std::string(" || Blue Score: ") + std::to_string(score_l) + std::string(" || Red Score: ") + std::to_string(score_r));
+
 
     if (dir == vec2(0.0f))
     {
@@ -37,12 +38,31 @@ void Ball::Update(float _dt) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
         score_l++;
+        window->SetWindowName("Pong" + std::string(" || Blue Score: ") + std::to_string(score_l) + std::string(" || Red Score: ") + std::to_string(score_r));
+
     }
     if (position.x < scale.x * 0.5f) {
         position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
         dir = vec2(0.0f);
         score_r++;
+        window->SetWindowName("Pong" + std::string(" || Blue Score: ") + std::to_string(score_l) + std::string(" || Red Score: ") + std::to_string(score_r));
+
     }
+
+    if (score_l == 5)
+    {
+        window->SetWindowName("Blue wins!");
+        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
+        dir = vec2(0.0f);
+    }
+
+    if (score_r == 5)
+    {
+        window->SetWindowName("Red wins!");
+        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
+        dir = vec2(0.0f);
+    }
+
 
     // detect if ball hits left paddle
     Paddle* leftPaddle = world->FindByName<Paddle>("LeftPaddle"); 
