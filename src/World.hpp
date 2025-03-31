@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 
 #include "Entity.hpp"
+#include "Renderer.hpp" // Adjusted the path to match the actual location of Renderer.hpp
 
 class World {
 public:
@@ -73,4 +74,9 @@ public:
     Entity* FindEntityByName(std::string _name) {
         return FindByName<Entity>(_name);
     }
+
+    Renderer* GetRenderer(); // Declare the method
+
+private:
+    Renderer* rendererInstance; // Assume this is where the renderer is stored
 };
