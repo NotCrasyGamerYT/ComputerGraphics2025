@@ -14,6 +14,15 @@ void Ball::Start() {
 
 void Ball::Update(float _dt) {
 
+    if (dir != glm::vec2(0.0f)) {
+        position += glm::vec3(dir.x, dir.y, 0.0f) * speed * _dt;
+        
+        // Store position in the trail
+        trailPositions.push_front(position);
+        if (trailPositions.size() > trailLength) {
+            trailPositions.pop_back(); // Remove oldest position
+        }
+    }
 
     if (dir == vec2(0.0f))
     {
@@ -89,10 +98,6 @@ if (EntityOverlap2D(*this, *leftPaddle)) {
         dir.x = abs(dir.x) * -1.0f;
         color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); // Change color to red
     }
-    
-    for (Entity* b : toDestroy) {
-        world->Destroy(b);
-    }
 }
 
 
@@ -131,14 +136,33 @@ if (!isRainingBall) {
         position += vec3(dir.x, dir.y, 0.0f) * speed * _dt;
 } 
 
-void Ball::Draw() {mat4 transform = mat4(1.0f);
-    transform = translate(transform, position);
-    transform = glm::scale(transform, scale);
+void Ball::Draw() {
+    mat4 transform;
 
-    // set shader variables
+    // Draw the trail (older positions first)
+    float alpha = 0.1f; // Start with low transparency
+    for (size_t i = trailPositions.size(); i > 0; --i) {
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, trailPositions[i - 1]);
+        transform = glm::scale(transform, scale * (1.0f - (float)i / (trailLength * 1.5f))); // Shrinks slightly
+
+        shader.SetVec4("COLOR", glm::vec4(color.r, color.g, color.b, alpha));
+        shader.SetMat4("TRANSFORM", transform);
+        
+        alpha += 0.08f; // Increase alpha for newer trail segments
+    }
+
+    // Draw the main ball
+    transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, position);
+    transform = glm::scale(transform, scale);
+    
     shader.SetVec4("COLOR", color);
     shader.SetMat4("TRANSFORM", transform);
 }
+
+
+
 
 void Ball::OnDestroy() {
     
