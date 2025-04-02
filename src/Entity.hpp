@@ -29,8 +29,6 @@ private:
 };
 
 static bool EntityOverlap2D(const Entity& a, const Entity& b) {
-    if (&a == nullptr || &b == nullptr) return false; // Check for null references
-
     float aHalfWidth = a.scale.x * 0.5f;
     float aHalfHeight = a.scale.y * 0.5f;
     float bHalfWidth = b.scale.x * 0.5f;

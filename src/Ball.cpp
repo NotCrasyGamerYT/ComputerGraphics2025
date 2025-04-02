@@ -78,14 +78,14 @@ if (score_l == 5 || score_r == 5) {
 
     // detect if ball hits left paddle
     Paddle* leftPaddle = world->FindByName<Paddle>("LeftPaddle"); 
-    if (leftPaddle && EntityOverlap2D(*this, *leftPaddle)) { // Check if leftPaddle is not null
-        dir.x = abs(dir.x);
-        color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); // Change color to blue
-    }
+if (EntityOverlap2D(*this, *leftPaddle)) {
+    dir.x = abs(dir.x);
+    color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f); // Change color to blue
+}
 
     // detect if ball hits right paddle
     Paddle* rightPaddle = world->FindByName<Paddle>("RightPaddle"); 
-    if (rightPaddle && EntityOverlap2D(*this, *rightPaddle)) { // Check if rightPaddle is not null
+    if (EntityOverlap2D(*this ,*rightPaddle)) {
         dir.x = abs(dir.x) * -1.0f;
         color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); // Change color to red
     }
@@ -131,47 +131,15 @@ if (!isRainingBall) {
         position += vec3(dir.x, dir.y, 0.0f) * speed * _dt;
 } 
 
-void Ball::Draw() {
-    mat4 transform = mat4(1.0f);
+void Ball::Draw() {mat4 transform = mat4(1.0f);
     transform = translate(transform, position);
     transform = glm::scale(transform, scale);
 
-    // Set shader variables
+    // set shader variables
     shader.SetVec4("COLOR", color);
     shader.SetMat4("TRANSFORM", transform);
-
-    // Draw the ball
-    renderer->Draw(transform, shader);
-
-    // Draw the trail
-    DrawTrail();
 }
 
 void Ball::OnDestroy() {
-
-}
-
-void Ball::DrawTrail() {
-    static std::vector<vec3> trailPositions;
-    static const size_t maxTrailSize = 100;
-
-    // Add the current position to the trail
-    trailPositions.push_back(position);
-    if (trailPositions.size() > maxTrailSize) {
-        trailPositions.erase(trailPositions.begin());
-    }
-
-    // Render the trail
-    for (const auto& trailPos : trailPositions) {
-        mat4 trailTransform = mat4(1.0f);
-        trailTransform = translate(trailTransform, trailPos);
-        trailTransform = glm::scale(trailTransform, vec3(10.0f, 10.0f, 0.0f));
-
-        shader.SetVec4("COLOR", glm::vec4(1.0f, 1.0f, 1.0f, 0.5f)); // Semi-transparent white
-        shader.SetMat4("TRANSFORM", trailTransform);
-
-        if (renderer) { // Ensure renderer is not null
-            renderer->Draw(trailTransform, shader);
-        }
-    }
+    
 }
