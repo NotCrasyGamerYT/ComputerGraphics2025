@@ -11,8 +11,13 @@ public:
     void Draw();
     void OnDestroy();
 
-    int score_l = 4;
+    int score_l = 0;
     int score_r = 0;
+
+    bool isRainingBall = false;
+    bool isGameOver = false;  
+    float gameOverTime = 0.0f; 
+    
     
 
     float speed = 100.0f;
