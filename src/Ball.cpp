@@ -70,20 +70,27 @@ if (score_l == 5 || score_r == 5) {
         }
     }
 
-    if (score_l == 5)
-    {
-        window->SetWindowName("Blue wins!");
-        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
-        dir = vec2(0.0f);
+    if (isGameOver && (SDL_GetTicks() / 1000.0f - gameOverTime >= 5.0f)) {
+        // Reset everything
+        score_l = 0;
+        score_r = 0;
+        isGameOver = false;
+        window->SetWindowName("Pong || Blue Score: 0 || Red Score: 0");
+    
+        // Destroy all raining balls
+        std::vector<Entity*> toDestroy;
+        for (Entity* e : world->entities) {
+            Ball* ball = dynamic_cast<Ball*>(e);
+            if (ball && ball->isRainingBall) {
+                toDestroy.push_back(ball);
+            }
+        }
+        
+        for (Entity* b : toDestroy) {
+            world->Destroy(b);
+        }
     }
-
-    if (score_r == 5)
-    {
-        window->SetWindowName("Red wins!");
-        position = vec3(window->GetScreenWidth()*0.5f, window->GetScreenHeight()*0.5f, 0.0f);
-        dir = vec2(0.0f);
-    }
-
+    
 
     // detect if ball hits left paddle
     Paddle* leftPaddle = world->FindByName<Paddle>("LeftPaddle"); 
